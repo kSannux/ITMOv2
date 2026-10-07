@@ -1,0 +1,54 @@
+[
+  {
+    "type": "step_start",
+    "timestamp": 1791375565788,
+    "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+    "part": {
+      "id": "prt_1164de3be0014tnPgnx5RselXk",
+      "messageID": "msg_1164cf9c3002uLhDXl5YVEuvfM",
+      "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+      "snapshot": "0cbb264e65c6c4f9209959c6f578ad896d0857aa",
+      "type": "step-start"
+    }
+  },
+  {
+    "type": "text",
+    "timestamp": 1791375569311,
+    "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+    "part": {
+      "id": "prt_1164de57e001js2Gz3szZ23NrU",
+      "messageID": "msg_1164cf9c3002uLhDXl5YVEuvfM",
+      "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+      "type": "text",
+      "text": "Summary:\nДобавлен POST-эндпоинт /api/reviews в app/api.py, который вызывает review_service.review с полем diff из тела запроса. В app/review_service.py добавлен метод review: он формирует промпт с полученным diff, вызывает llm.generate и возвращает {\"comment\": ...}.\n\nRisks:\n- file: app/api.py; line(s): 35–37; finding: Возможен KeyError при обращении к payload[\"diff\"] без проверки наличия поля. evidence: '+def create_review(payload: dict) -> dict[str, str]:\\n+    return review_service.review(payload[\"diff\"])'; reasoning: Если клиент отправит тело без ключа diff (например, {}), выражение payload[\"diff\"] выбросит KeyError → 500 Internal Server Error вместо предсказуемого ответа. check_ref: C1.\n\nChecks:\n- C1: Отсутствующее поле diff вызывает ошибку. Шаги: 1) Запустить сервис (например, uvicorn app.api:app). 2) Выполнить: curl -s -o /dev/null -w \"%{http_code}\\n\" -X POST http://localhost:8000/api/reviews -H \"Content-Type: application/json\" -d '{}'. Ожидаемый результат: статус 500 (Internal Server Error); в логах приложения видно исключение KeyError: 'diff'.",
+      "time": {
+        "start": 1791375566206,
+        "end": 1791375569303
+      }
+    }
+  },
+  {
+    "type": "step_finish",
+    "timestamp": 1791375569391,
+    "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+    "part": {
+      "id": "prt_1164df1e3001J3CmURBbIbrswr",
+      "reason": "stop",
+      "snapshot": "72ab7422877f4a324ea6c4a2b984a6fb787cc09e",
+      "messageID": "msg_1164cf9c3002uLhDXl5YVEuvfM",
+      "sessionID": "ses_ee9b30a1affeOw1qJKO6SqziGU",
+      "type": "step-finish",
+      "tokens": {
+        "total": 9809,
+        "input": 4898,
+        "output": 303,
+        "reasoning": 4608,
+        "cache": {
+          "write": 0,
+          "read": 0
+        }
+      },
+      "cost": 0
+    }
+  }
+]
