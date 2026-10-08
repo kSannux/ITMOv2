@@ -11,10 +11,10 @@
       },
       "models": {
         "itmo-agent": {
-          "name": "ITMO local 32k",
+          "name": "ITMO local 8k",
           "limit": {
-            "context": 32768,
-            "output": 2048
+            "context": 8192,
+            "output": 1024
           }
         }
       }
