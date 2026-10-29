@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Экспорт таблицы в JSON</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Практика 05 · Локальное демо</p>
+  <h1>Сотрудники</h1>
+  <p>Настройте таблицу и скачайте текущую страницу в JSON.</p>
+  <div class="toolbar">
+    <label>Поиск/Фильтр <input id="search" type="search" placeholder="Поиск/Фильтр"></label>
+    <span id="export-wrapper" tabindex="0" aria-describedby="export-tooltip">
+      <button id="export" type="button">Экспорт в JSON</button>
+      <span id="export-tooltip" role="tooltip" hidden></span>
+    </span>
+  </div>
+  <fieldset id="columns"><legend>Видимые столбцы</legend></fieldset>
+  <div class="table-scroll"><table><caption class="sr-only">Текущая страница сотрудников. Для сортировки нажмите заголовок столбца.</caption><thead id="head"></thead><tbody id="body"></tbody></table></div>
+  <p id="empty" hidden>Ничего не найдено. Попробуйте изменить фильтр.</p>
+  <nav aria-label="Страницы таблицы">
+    <button id="prev" type="button">Назад</button>
+    <span id="page" aria-live="polite"></span>
+    <button id="next" type="button">Далее</button>
+    <label>Строк на странице <select id="page-size"><option>5</option><option>10</option><option>20</option></select></label>
+  </nav>
+  <p id="summary" aria-live="polite"></p>
+  <p class="hint">Экспортируются только текущая страница и отмеченные столбцы. Сортировка сохраняется.</p>
+  <div id="toast" role="alert" hidden></div>
+</main>
+<script id="initial-data" type="application/json">{{ rows | tojson }}</script>
+</body>
+</html>

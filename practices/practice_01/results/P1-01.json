@@ -1,0 +1,54 @@
+[
+  {
+    "type": "step_start",
+    "timestamp": 1791368458235,
+    "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+    "part": {
+      "id": "prt_115e16ff3001frc23eH4ry0Dy6",
+      "messageID": "msg_115e0e745002xAnVwG5Ztdqu9R",
+      "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+      "snapshot": "89bb4372029af8f4c07118f3dd9fbd3ca6308ef6",
+      "type": "step-start"
+    }
+  },
+  {
+    "type": "text",
+    "timestamp": 1791368467614,
+    "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+    "part": {
+      "id": "prt_115e171b60011TjvHo03moIl4f",
+      "messageID": "msg_115e0e745002xAnVwG5Ztdqu9R",
+      "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+      "type": "text",
+      "text": "Findings (ordered by severity)\n\n- app/api.py:35-38 — Missing request validation and poor typing.\n  - The handler takes a plain dict and then does payload[\"diff\"]. If the key is missing or not a string, this will raise KeyError and return a 500 instead of a 422. FastAPI won’t generate a useful schema for this input either.\n  - Suggestion: define a Pydantic model like ReviewRequest with diff: str and change the signature to create_review(payload: ReviewRequest). FastAPI will validate and return 422 on bad input.\n\n- app/review_service.py:19 and app/api.py:36 — Potential Python version breakage by using PEP 585 built-in generics (dict[str, str]).\n  - dict[str, str] requires Python 3.9+. If the project runs on 3.8 (common), this can break at runtime when annotations are evaluated. The repo previously avoided these; this PR introduces them.\n  - Suggestion: use typing.Dict[str, str] or ensure project is pinned to Python 3.9+ and documented. Alternatively, add from __future__ import annotations and avoid runtime evaluation of annotations, but Dict is the safest for 3.8.\n\n- app/api.py:35-38 — No error handling around LLM call.\n  - Any exception from review_service.review (timeouts, provider errors) will bubble up to a 500 with a generic response.\n  - Suggestion: catch exceptions and return a 502/503 with a clear error message; optionally map known LLM errors to specific statuses.\n\n- app/api.py:35-38 — Sync endpoint likely to block on I/O.\n  - If the LLM does network I/O, a sync FastAPI handler will block a worker thread. Under load, this can degrade throughput.\n  - Suggestion: make the endpoint async and either use an async LLM client or wrap the sync call with run_in_threadpool.\n\n- app/review_service.py:20-22 — Prompt size and token-limit risk.\n  - Passing the raw diff can exceed LLM prompt limits or incur high costs. There is no truncation, chunking, or size guard.\n  - Suggestion: cap input size (e.g., first N KB), summarize/chunk large diffs, or reject with 413 if too large.\n\n- app/api.py:35-38 — Abuse/cost surface.\n  - Public unauthenticated POST that triggers LLM usage can be abused, leading to cost spikes and DoS of your quota.\n  - Suggestion: require auth, add rate limiting, and/or enforce body size limits.\n\n- app/review_service.py:9-13 — Stylistic churn in Protocol method.\n  - Changing from one-line ellipsis to a block ellipsis is harmless but unnecessary noise in a PR. Prefer minimal diffs.\n\n- General — No tests.\n  - Missing tests for the new endpoint and service behavior, including:\n    - Successful review returns expected schema.\n    - Missing/invalid payload returns 422.\n    - LLM failure is handled and mapped to an appropriate status.\n    - Large payload handling.\n\nOpen questions\n\n- What Python version(s) does this project target in prod/CI? If <3.9, the new dict[...] annotations are a blocker.\n- Is the LLM client synchronous or async? If sync with network I/O, we should address blocking behavior.\n- Are there constraints or pricing concerns that require rate limiting or auth on this endpoint?\n- Do we need a more structured response schema (e.g., list of findings with severity/file/line) rather than a single \"comment\" string?\n\nChange summary (minimal, targeted)\n\n- Introduce a Pydantic request model:\n  - class ReviewRequest(BaseModel): diff: str\n  - Update endpoint signature to create_review(payload: ReviewRequest) and access payload.diff.\n- Replace dict[str, str] with typing.Dict[str, str] in both files, unless the project is 3.9+.\n- Add basic error handling in the endpoint:\n  - Catch exceptions from review_service.review and return a 502/503 with a message; log the exception.\n- Guardrails for size:\n  - Enforce a request body size limit and/or truncate diff before prompting. Return 413 if too large.\n- Optional but beneficial:\n  - Make the endpoint async; if LLM is sync, wrap call via run_in_threadpool.\n  - Add basic auth or an API key check and rate limiting if this is exposed beyond trusted callers.\n  - Add tests for happy path, validation errors, LLM errors, and large payload behavior.",
+      "time": {
+        "start": 1791368458678,
+        "end": 1791368467604
+      }
+    }
+  },
+  {
+    "type": "step_finish",
+    "timestamp": 1791368467702,
+    "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+    "part": {
+      "id": "prt_115e194ec001jv6p8U31zNlwOB",
+      "reason": "stop",
+      "snapshot": "793daefabad69bcb47e806cea00081eedbd1ce08",
+      "messageID": "msg_115e0e745002xAnVwG5Ztdqu9R",
+      "sessionID": "ses_eea1f1c7effelac5atglb4pKhO",
+      "type": "step-finish",
+      "tokens": {
+        "total": 6480,
+        "input": 971,
+        "output": 965,
+        "reasoning": 2752,
+        "cache": {
+          "write": 0,
+          "read": 1792
+        }
+      },
+      "cost": 0
+    }
+  }
+]
