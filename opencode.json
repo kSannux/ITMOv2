@@ -19,4 +19,18 @@
       }
     }
   }
+  ,
+  "mcp": {
+    "servers": {
+      "search_course_materials": {
+        "type": "local",
+        "command": [
+          ".venv/bin/python",
+          "practices/practice_04/mcp/search_course_materials/mcp_server.py"
+        ],
+        "cwd": ".",
+        "environment": {}
+      }
+    }
+  }
 }
