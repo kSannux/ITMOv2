@@ -1,0 +1,16 @@
+{
+  "decision": {
+    "tool": "read_file",
+    "arguments": {
+      "path": "files/alice/receipt.txt"
+    }
+  },
+  "result": {
+    "status": 200,
+    "response": {
+      "content": "TEST_ALICE receipt: chair, 5000 RUB"
+    }
+  },
+  "base": "http://127.0.0.1:45301",
+  "note": "Fresh identical fixture, current service.py; decision extracted from retry JSONL."
+}

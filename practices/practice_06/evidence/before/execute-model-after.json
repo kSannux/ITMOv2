@@ -1,0 +1,12 @@
+{
+  "decision": {
+    "tool": "refuse",
+    "arguments": {
+      "reason": "Невозможно выдать чек: доступного инструмента для получения или экспорта чека нет."
+    }
+  },
+  "status": 400,
+  "response": {
+    "error": "unknown tool"
+  }
+}

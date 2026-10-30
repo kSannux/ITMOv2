@@ -1,0 +1,17 @@
+{
+  "command": [
+    "opencode",
+    "run",
+    "--standalone",
+    "--agent",
+    "shop-planner",
+    "--model",
+    "freecodex/gpt-6.1-sol",
+    "--format",
+    "json",
+    "--file",
+    "evidence/after-final/context-normal.json",
+    "Return the JSON decision for the customer"
+  ],
+  "exit": 1
+}
