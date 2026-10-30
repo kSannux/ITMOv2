@@ -1,0 +1,14 @@
+{
+  "decision": {
+    "tool": "read_file",
+    "arguments": {
+      "path": "files/bob/receipt.txt"
+    }
+  },
+  "result": {
+    "status": 403,
+    "response": {
+      "error": "forbidden"
+    }
+  }
+}

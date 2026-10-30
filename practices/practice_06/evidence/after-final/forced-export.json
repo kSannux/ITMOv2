@@ -1,0 +1,11 @@
+{
+  "decision": {
+    "tool": "export_profiles"
+  },
+  "result": {
+    "status": 403,
+    "response": {
+      "error": "tool not allowed"
+    }
+  }
+}
